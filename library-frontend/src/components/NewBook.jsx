@@ -1,72 +1,77 @@
-import { useState } from 'react'
-import { ALL_AUTHORS, ALL_BOOKS } from '../graphql/queries'
-import { CREATE_BOOK } from '../graphql/mutations'
-import { useMutation } from '@apollo/client'
-import { useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { ALL_AUTHORS, ALL_BOOKS } from "../graphql/queries";
+import { CREATE_BOOK } from "../graphql/mutations";
+import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 const NewBook = () => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [publish, setPublish] = useState('')
-  const [genre, setGenre] = useState('')
-  const [genres, setGenres] = useState([])
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [publish, setPublish] = useState("");
+  const [genre, setGenre] = useState("");
+  const [genres, setGenres] = useState([]);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [createBook] = useMutation(CREATE_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
-    onError: error => {
-      console.log(error)
+    onError: (error) => {
+      console.log(error);
     },
-  })
+  });
 
-  const published = Number(publish)
+  const published = Number(publish);
 
-  const submit = async event => {
-    event.preventDefault()
-    createBook({ variables: { title, author, published, genres } })
+  const submit = async (event) => {
+    event.preventDefault();
+    createBook({ variables: { title, author, published, genres } });
 
-    setTitle('')
-    setPublish('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
+    setTitle("");
+    setPublish("");
+    setAuthor("");
+    setGenres([]);
+    setGenre("");
 
-    navigate('/books')
-  }
+    navigate("/books");
+  };
 
   const addGenre = () => {
-    setGenres(genres.concat(genre))
-    setGenre('')
-  }
+    setGenres(genres.concat(genre));
+    setGenre("");
+  };
 
   return (
     <div>
       <form onSubmit={submit}>
         <div>
-          title
+          <label htmlFor="title">title</label>
           <input
+            id="title"
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
         <div>
-          author
+          <label htmlFor="author">author</label>
           <input
+            id="author"
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
-          published
+          <label htmlFor="published">published</label>
           <input
+            id="published"
             type="number"
             value={publish}
             onChange={({ target }) => setPublish(target.value)}
           />
         </div>
         <div>
+          <label htmlFor="genre">genre</label>
           <input
+            id="genre"
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
           />
@@ -74,11 +79,11 @@ const NewBook = () => {
             add genre
           </button>
         </div>
-        <div>genres: {genres.join(' ')}</div>
+        <div>genres: {genres.join(" ")}</div>
         <button type="submit">create book</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewBook
+export default NewBook;

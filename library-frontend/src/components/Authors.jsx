@@ -26,7 +26,7 @@ const Authors = ({ token }) => {
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
-    const name = formJson.author;
+    const name = formJson.name;
     editAuthor({ variables: { name, setBornTo } });
     setYear("");
   };
@@ -55,7 +55,7 @@ const Authors = ({ token }) => {
           <h2>set birthyear</h2>
           <form onSubmit={submit}>
             <div>
-              <select name="author">
+              <select name="name">
                 {authors.map((a) => (
                   <option key={a.name} value={a.name}>
                     {a.name}
@@ -64,14 +64,15 @@ const Authors = ({ token }) => {
               </select>
             </div>
             <div>
-              born
+              <label htmlFor="born">born</label>
               <input
+                id="born"
                 type="number"
                 value={year}
                 onChange={({ target }) => setYear(target.value)}
               />
             </div>
-            <button type="submit">update birthyear</button>
+            <button type="submit">update author</button>
           </form>
         </div>
       )}

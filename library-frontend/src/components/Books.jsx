@@ -1,25 +1,25 @@
-import { useState, useEffect } from 'react'
-import { ALL_BOOKS } from '../graphql/queries'
-import { useLazyQuery } from '@apollo/client'
+import { useState, useEffect } from "react";
+import { ALL_BOOKS } from "../graphql/queries";
+import { useLazyQuery } from "@apollo/client";
 
 const Books = ({ books, setBooks }) => {
-  const [genres, setGenres] = useState([])
-  const [getBooks, { data }] = useLazyQuery(ALL_BOOKS)
+  const [genres, setGenres] = useState([]);
+  const [getBooks, { data }] = useLazyQuery(ALL_BOOKS);
 
   useEffect(() => {
     if (data) {
-      setBooks(data.allBooks)
+      setBooks(data.allBooks);
     }
-  }, [data])
+  }, [data]);
 
   if (books) {
-    books.map(book => {
-      book.genres.map(genre => {
+    books.map((book) => {
+      book.genres.map((genre) => {
         if (!genres.includes(genre)) {
-          setGenres(genres.concat(genre))
+          setGenres(genres.concat(genre));
         }
-      })
-    })
+      });
+    });
   }
 
   return (
@@ -33,7 +33,7 @@ const Books = ({ books, setBooks }) => {
             <th>published</th>
           </tr>
           {books &&
-            books.map(a => (
+            books.map((a) => (
               <tr key={a.title}>
                 <td>{a.title}</td>
                 <td>{a.author.name}</td>
@@ -42,7 +42,8 @@ const Books = ({ books, setBooks }) => {
             ))}
         </tbody>
       </table>
-      {genres.map(genre => (
+      <div>in genre</div>
+      {genres.map((genre) => (
         <button
           key={genre}
           onClick={() => getBooks({ variables: { genre: genre } })}
@@ -50,9 +51,9 @@ const Books = ({ books, setBooks }) => {
           {genre}
         </button>
       ))}
-      <button onClick={() => getBooks()}>show all</button>
+      <button onClick={() => getBooks()}>all genres</button>
     </div>
-  )
-}
+  );
+};
 
-export default Books
+export default Books;
