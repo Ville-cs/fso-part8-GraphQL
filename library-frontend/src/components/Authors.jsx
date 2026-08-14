@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import { ALL_AUTHORS } from '../graphql/queries'
-import { EDIT_AUTHOR } from '../graphql/mutations'
-import { useQuery, useMutation } from '@apollo/client'
+import { useState } from "react";
+import { ALL_AUTHORS } from "../graphql/queries";
+import { EDIT_AUTHOR } from "../graphql/mutations";
+import { useQuery, useMutation } from "@apollo/client";
 
-const Authors = () => {
-  const [year, setYear] = useState('')
+const Authors = ({ token }) => {
+  const [year, setYear] = useState("");
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
-    onError: error => {
-      console.log(error)
+    onError: (error) => {
+      console.log(error);
     },
-  })
-  const result = useQuery(ALL_AUTHORS)
+  });
+  const result = useQuery(ALL_AUTHORS);
 
   if (result.loading) {
-    return <div>loading</div>
+    return <div>loading</div>;
   }
 
-  const authors = result.data.allAuthors
+  const authors = result.data.allAuthors;
 
-  const setBornTo = Number(year)
+  const setBornTo = Number(year);
 
-  const submit = async event => {
-    event.preventDefault()
-    const form = event.target
-    const formData = new FormData(form)
-    const formJson = Object.fromEntries(formData.entries())
-    const name = formJson.author
-    editAuthor({ variables: { name, setBornTo } })
-    setYear('')
-  }
+  const submit = async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    const name = formJson.author;
+    editAuthor({ variables: { name, setBornTo } });
+    setYear("");
+  };
 
   return (
     <div>
@@ -41,7 +41,7 @@ const Authors = () => {
             <th>born</th>
             <th>books</th>
           </tr>
-          {authors.map(a => (
+          {authors.map((a) => (
             <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
@@ -50,31 +50,33 @@ const Authors = () => {
           ))}
         </tbody>
       </table>
-      <h2>set birthyear</h2>
-      <div>
-        <form onSubmit={submit}>
-          <div>
-            <select name="author">
-              {authors.map(a => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            born
-            <input
-              type="number"
-              value={year}
-              onChange={({ target }) => setYear(target.value)}
-            />
-          </div>
-          <button type="submit">update birthyear</button>
-        </form>
-      </div>
+      {token && (
+        <div>
+          <h2>set birthyear</h2>
+          <form onSubmit={submit}>
+            <div>
+              <select name="author">
+                {authors.map((a) => (
+                  <option key={a.name} value={a.name}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              born
+              <input
+                type="number"
+                value={year}
+                onChange={({ target }) => setYear(target.value)}
+              />
+            </div>
+            <button type="submit">update birthyear</button>
+          </form>
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;

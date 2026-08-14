@@ -1,60 +1,60 @@
-import { useState, useEffect } from 'react'
-import Authors from './components/Authors'
-import Books from './components/Books'
-import NewBook from './components/NewBook'
-import Login from './components/Login'
-import Recommended from './components/Recommended'
-import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom'
-import { useApolloClient } from '@apollo/client'
-import { ALL_BOOKS, ME, BOOK_ADDED } from './graphql/queries'
-import { useQuery, useSubscription } from '@apollo/client'
+import { useState, useEffect } from "react";
+import Authors from "./components/Authors";
+import Books from "./components/Books";
+import NewBook from "./components/NewBook";
+import Login from "./components/Login";
+import Recommended from "./components/Recommended";
+import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
+import { useApolloClient } from "@apollo/client";
+import { ALL_BOOKS, ME, BOOK_ADDED } from "./graphql/queries";
+import { useQuery, useSubscription } from "@apollo/client";
 
 const App = () => {
-  const [token, setToken] = useState(null)
-  const [books, setBooks] = useState(null)
-  const [userDetails, setUserDetails] = useState(null)
-  const client = useApolloClient()
-  const navigate = useNavigate()
-  const { data: booksData } = useQuery(ALL_BOOKS)
-  const { data: userData, refetch } = useQuery(ME)
+  const [token, setToken] = useState(null);
+  const [books, setBooks] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
+  const client = useApolloClient();
+  const navigate = useNavigate();
+  const { data: booksData } = useQuery(ALL_BOOKS);
+  const { data: userData, refetch } = useQuery(ME);
 
   useEffect(() => {
-    const userToken = window.localStorage.getItem('library-user-token')
+    const userToken = window.localStorage.getItem("library-user-token");
     if (userToken) {
-      setToken(userToken)
+      setToken(userToken);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    refetch()
-  }, [token])
+    refetch();
+  }, [token]);
 
   useEffect(() => {
     if (booksData) {
-      setBooks(booksData.allBooks)
+      setBooks(booksData.allBooks);
     }
     if (userData) {
-      setUserDetails(userData.me)
+      setUserDetails(userData.me);
     }
-  }, [booksData, userData])
+  }, [booksData, userData]);
 
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
-      const addedBook = data.data.bookAdded
+      const addedBook = data.data.bookAdded;
       client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
         return {
           allBooks: allBooks.concat(addedBook),
-        }
-      })
+        };
+      });
     },
-  })
+  });
 
   const handleLogout = () => {
-    setToken(null)
-    localStorage.removeItem('library-user-token')
-    client.resetStore()
-    navigate('/')
-  }
+    setToken(null);
+    localStorage.removeItem("library-user-token");
+    client.resetStore();
+    navigate("/");
+  };
 
   return (
     <div>
@@ -85,7 +85,7 @@ const App = () => {
       </div>
 
       <Routes>
-        <Route path="/" element={<Authors />} />
+        <Route path="/" element={<Authors token={token} />} />
         <Route
           path="/books"
           element={<Books books={books} setBooks={setBooks} />}
@@ -112,7 +112,7 @@ const App = () => {
         />
       </Routes>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
