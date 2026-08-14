@@ -51,12 +51,15 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args, context) => {
       if (!context.currentUser) {
-        throw new GraphQLError("Login to add a book", {
+        throw new GraphQLError("not authenticated", {
           extensions: { code: "NO_AUTHORIZATION" },
         });
       }
       try {
-        const author = await Author.findOne({ name: args.author });
+        let author = await Author.findOne({ name: args.author });
+        if (!author) {
+          author = new Author({ name: args.author });
+        }
         const book = new Book({ ...args, author: author.id });
         author.books = author.books.concat(book);
         result = await book.save();
@@ -91,7 +94,7 @@ const resolvers = {
     },
     editAuthor: async (root, args, context) => {
       if (!context.currentUser) {
-        throw new GraphQLError("Login to edit an author", {
+        throw new GraphQLError("not authenticated", {
           extensions: { code: "NO_AUTHORIZATION" },
         });
       }
