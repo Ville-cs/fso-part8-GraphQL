@@ -1,1 +1,1 @@
-# fso-part8-GraphQL
+# My personal submission for Full Stack open, part8: GraphQL
